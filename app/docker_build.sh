@@ -12,7 +12,7 @@ mkdir -p "${OUTPUT_DIR}"
 docker run --rm \
   -v "${OUTPUT_DIR}:/export" \
   eq_rp_linux_builder \
-  bash -c "cp -r /app/build/linux/x64/release/bundle/. /export/"
+  bash -c "cp -r /app/build/linux/*/release/bundle/. /export/"
 
 echo ""
 echo "✅ ビルド完了！ 成果物: ${OUTPUT_DIR}"
