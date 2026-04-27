@@ -1,0 +1,39 @@
+name: app
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.0
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  riverpod_annotation: ^4.0.2
+  http: ^1.6.0
+  flutter_hooks: ^0.21.3+1
+  hooks_riverpod: ^3.3.1
+  web_socket_channel: ^3.0.3
+  go_router: ^17.2.2
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.11.0
+  #地図
+  japan_maps:
+    git:
+      url: https://github.com/ironmax123/japan_maps.git
+      ref: main
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  riverpod_generator: ^4.0.3
+  build_runner: ^2.14.1
+  freezed: ^3.2.5
+  json_serializable: ^6.9.6
+
+
+
+flutter:
+  uses-material-design: true
