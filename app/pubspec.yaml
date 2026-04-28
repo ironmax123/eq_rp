@@ -19,10 +19,7 @@ dependencies:
   freezed_annotation: ^3.1.0
   json_annotation: ^4.11.0
   #地図
-  japan_maps:
-    git:
-      url: https://github.com/ironmax123/japan_maps.git
-      ref: main
+  japan_maps: ^1.0.1
 
 dev_dependencies:
   flutter_test:

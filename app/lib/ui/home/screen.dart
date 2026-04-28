@@ -15,14 +15,15 @@ class HomeScreen extends ConsumerWidget {
     final state = ref.watch(homeScreenViewModelProvider);
     final vm = ref.read(homeScreenViewModelProvider.notifier);
 
-    // 地震データから都道府県カラーを構築（最新1件のみ）
+    // 地震データから都道府県カラーを構築
+    // latestEqがnullの場合でもPrefectureオブジェクトを渡し、地震がない地域には明示的にmapColorを使用させる
     final latestEq = state.earthquakeResponse?.earthquakes.firstOrNull;
-    final prefecture = latestEq != null
-        ? buildPrefectureColors(
-            earthquakes: [latestEq],
-            defaultColor: const Color(0x00000000),
-          )
-        : null;
+    
+    final mapColor = const Color.fromARGB(255, 20, 121, 32).withAlpha(128);
+    final prefecture = buildPrefectureColors(
+      earthquakes: latestEq != null ? [latestEq] : [],
+      defaultColor: mapColor,
+    );
 
     return Scaffold(
       backgroundColor: const Color(0xff1a1a2e),
@@ -46,8 +47,13 @@ class HomeScreen extends ConsumerWidget {
                         longitude: latestEq?.epicenter.longitude ?? 138.0,
                       ),
                       backgroundColor: const Color.fromARGB(255, 137, 169, 236),
-                      otherCountryColor: const Color.fromARGB(255, 1, 81, 28),
-                      mapColor: Colors.blueAccent.withAlpha(128),
+                      otherCountryColor: const Color.fromARGB(255, 1, 57, 52),
+                      mapColor: const Color.fromARGB(
+                        255,
+                        20,
+                        121,
+                        32,
+                      ).withAlpha(128),
                       prefecture: prefecture,
                       onPrefectureTap: (pref) {
                         vm.selectPrefecture(pref.key);

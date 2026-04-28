@@ -339,12 +339,11 @@ packages:
   japan_maps:
     dependency: "direct main"
     description:
-      path: "."
-      ref: main
-      resolved-ref: d75442ed8dc0f3ae42b418af8ec742f48809c511
-      url: "https://github.com/ironmax123/japan_maps.git"
-    source: git
-    version: "0.0.1"
+      name: japan_maps
+      sha256: d4f41be86f0509c89cbaeb89abbac526bd81f6d28a4adc5e335c30bf9bb0f17d
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   json_annotation:
     dependency: "direct main"
     description:
