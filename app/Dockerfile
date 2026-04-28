@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     cmake ninja-build clang pkg-config \
     libgtk-3-dev libblkid-dev liblzma-dev \
     libglib2.0-dev libpango1.0-dev libcairo2-dev \
-    libgdk-pixbuf2.0-dev libegl1-mesa-dev libgl1-mesa-dev \
+    libgdk-pixbuf2.0-dev libegl1-mesa-dev libgl1-mesa-dev libwebp-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Flutter SDK インストール（stable）
