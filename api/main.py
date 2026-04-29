@@ -22,3 +22,5 @@ def read_root():
 @app.get("/v1/eq/{timestamp}")
 def get_eq(timestamp:int):
     return eq_root_router(app,timestamp=timestamp)
+
+## --- 以下Rasberry Pi ---
