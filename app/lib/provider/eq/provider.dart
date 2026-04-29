@@ -8,7 +8,7 @@ import '../client/provider.dart';
 part 'provider.g.dart';
 
 /// デモ用: localhost のベースURL
-const _baseUrl = 'https://demo_api.flutterapp-dev-12345.workers.dev';
+const _baseUrl = 'http://127.0.0.1:8000/';
 
 /// デモ用: ハードコードされたリクエスト時刻
 const _requestTime = '20260427140000';
