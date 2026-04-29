@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../model/earthquake.dart';
 import '../../provider/eq/provider.dart';
+import '../../provider/history/provider.dart';
 
 part 'view_model.freezed.dart';
 part 'view_model.g.dart';
@@ -27,11 +28,19 @@ abstract class HomeScreenState with _$HomeScreenState {
 class HomeScreenViewModel extends _$HomeScreenViewModel {
   @override
   HomeScreenState build() {
-    // eqProviderをwatchし、データが来たら状態を更新
-    final eqAsync = ref.watch(eqProvider);
+    final historyAsync = ref.watch(historyEqProvider);
+    final realtimeData = ref.watch(eqProvider);
 
-    return eqAsync.when(
-      data: (data) => HomeScreenState(earthquakeResponse: data),
+    return historyAsync.when(
+      data: (history) {
+        if (realtimeData != null && realtimeData.earthquakes.isNotEmpty) {
+          final rtEq = realtimeData.earthquakes.first;
+          final filteredHistory = history.earthquakes.where((e) => e.id != rtEq.id).toList();
+          final mergedData = EarthquakeResponse(earthquakes: [rtEq, ...filteredHistory]);
+          return HomeScreenState(earthquakeResponse: mergedData);
+        }
+        return HomeScreenState(earthquakeResponse: history);
+      },
       loading: () => const HomeScreenState(),
       error: (e, _) => HomeScreenState(errorMessage: e.toString()),
     );

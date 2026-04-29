@@ -12,7 +12,7 @@ part of 'provider.dart';
 @ProviderFor(Eq)
 final eqProvider = EqProvider._();
 
-final class EqProvider extends $AsyncNotifierProvider<Eq, EarthquakeResponse> {
+final class EqProvider extends $NotifierProvider<Eq, EarthquakeResponse?> {
   EqProvider._()
     : super(
         from: null,
@@ -30,22 +30,29 @@ final class EqProvider extends $AsyncNotifierProvider<Eq, EarthquakeResponse> {
   @$internal
   @override
   Eq create() => Eq();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(EarthquakeResponse? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<EarthquakeResponse?>(value),
+    );
+  }
 }
 
-String _$eqHash() => r'9bf935ed8f593ee3a80c5b4fe56b70c1e65ad53d';
+String _$eqHash() => r'4d6cf52a9078cad2578fc333b31e73c3c5633820';
 
-abstract class _$Eq extends $AsyncNotifier<EarthquakeResponse> {
-  FutureOr<EarthquakeResponse> build();
+abstract class _$Eq extends $Notifier<EarthquakeResponse?> {
+  EarthquakeResponse? build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref =
-        this.ref as $Ref<AsyncValue<EarthquakeResponse>, EarthquakeResponse>;
+    final ref = this.ref as $Ref<EarthquakeResponse?, EarthquakeResponse?>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<EarthquakeResponse>, EarthquakeResponse>,
-              AsyncValue<EarthquakeResponse>,
+              AnyNotifier<EarthquakeResponse?, EarthquakeResponse?>,
+              EarthquakeResponse?,
               Object?,
               Object?
             >;

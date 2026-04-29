@@ -27,6 +27,20 @@ Color _intensityColor(String intensity) {
   }
 }
 
+String _formatTime(String isoString) {
+  try {
+    final dt = DateTime.parse(isoString).toLocal();
+    final y = dt.year.toString().padLeft(4, '0');
+    final m = dt.month.toString().padLeft(2, '0');
+    final d = dt.day.toString().padLeft(2, '0');
+    final h = dt.hour.toString().padLeft(2, '0');
+    final min = dt.minute.toString().padLeft(2, '0');
+    return '$y/$m/$d $h:$min';
+  } catch (e) {
+    return isoString;
+  }
+}
+
 class EqListWidget extends StatelessWidget {
   final List<Earthquake>? earthquakes;
   const EqListWidget({super.key, required this.earthquakes});
@@ -47,7 +61,7 @@ class EqListWidget extends StatelessWidget {
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
           decoration: BoxDecoration(
-            color: bgColor.withOpacity(0.85),
+            color: bgColor.withValues(alpha: 0.85),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: Colors.white12),
           ),
@@ -91,7 +105,7 @@ class EqListWidget extends StatelessWidget {
                 const SizedBox(height: 4),
                 // 発生日時
                 Text(
-                  eq.occurredAt,
+                  _formatTime(eq.occurredAt),
                   style: const TextStyle(color: Colors.white70, fontSize: 11),
                 ),
                 const SizedBox(height: 2),

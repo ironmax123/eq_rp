@@ -45,7 +45,7 @@ final class HomeScreenViewModelProvider
 }
 
 String _$homeScreenViewModelHash() =>
-    r'c1d2374cc9f82c3284b27e7ea179e9ade3e0c486';
+    r'd643930efe701e1c30af47a685af79eac7d6efe5';
 
 /// ホーム画面のViewModel
 
