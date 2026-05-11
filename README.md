@@ -66,3 +66,5 @@ cd app
 flutter pub get
 flutter run
 ```
+
+<img src="https://github.com/ironmax123/eq_rp/blob/main/screenshot/app.png">
