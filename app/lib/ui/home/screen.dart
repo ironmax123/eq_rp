@@ -1,5 +1,6 @@
 import 'package:app/ui/home/widget/intensity_legend.dart';
 import 'package:app/ui/home/widget/list.dart';
+import 'package:app/util/intensity_color.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:japan_maps/japan_maps.dart';
@@ -15,13 +16,11 @@ class HomeScreen extends ConsumerWidget {
     final state = ref.watch(homeScreenViewModelProvider);
     final vm = ref.read(homeScreenViewModelProvider.notifier);
 
-    // 地震データから都道府県カラーを構築
-    // latestEqがnullの場合でもPrefectureオブジェクトを渡し、地震がない地域には明示的にmapColorを使用させる
-    final latestEq = state.earthquakeResponse?.earthquakes.firstOrNull;
-    
+    final selected = state.selectedEarthquake;
+
     final mapColor = const Color.fromARGB(255, 20, 121, 32).withAlpha(128);
     final prefecture = buildPrefectureColors(
-      earthquakes: latestEq != null ? [latestEq] : [],
+      earthquakes: selected != null ? [selected] : [],
       defaultColor: mapColor,
     );
 
@@ -36,29 +35,47 @@ class HomeScreen extends ConsumerWidget {
                   flex: 2,
                   child: EqListWidget(
                     earthquakes: state.earthquakeResponse?.earthquakes,
+                    selectedId: state.selectedEarthquake?.id,
+                    onTap: (eq) => vm.selectEarthquake(eq),
                   ),
                 ),
                 Expanded(
                   flex: 8,
-                  child: ClipRect(
-                    child: JapanColorMapsWidget(
-                      center: LatLng(
-                        latitude: latestEq?.epicenter.latitude ?? 36.0,
-                        longitude: latestEq?.epicenter.longitude ?? 138.0,
+                  child: Stack(
+                    children: [
+                      ClipRect(
+                        child: JapanColorMapsWidget(
+                          key: ValueKey('${selected?.epicenter.latitude ?? 0}_${selected?.epicenter.longitude ?? 0}'),
+                          center: LatLng(
+                            latitude: selected?.epicenter.latitude ?? 36.0,
+                            longitude: selected?.epicenter.longitude ?? 138.0,
+                          ),
+                          backgroundColor:
+                              const Color.fromARGB(255, 137, 169, 236),
+                          otherCountryColor:
+                              const Color.fromARGB(255, 1, 57, 52),
+                          mapColor: const Color.fromARGB(255, 20, 121, 32)
+                              .withAlpha(128),
+                          prefecture: prefecture,
+                          onPrefectureTap: (pref) {
+                            vm.selectPrefecture(pref.key);
+                          },
+                        ),
                       ),
-                      backgroundColor: const Color.fromARGB(255, 137, 169, 236),
-                      otherCountryColor: const Color.fromARGB(255, 1, 57, 52),
-                      mapColor: const Color.fromARGB(
-                        255,
-                        20,
-                        121,
-                        32,
-                      ).withAlpha(128),
-                      prefecture: prefecture,
-                      onPrefectureTap: (pref) {
-                        vm.selectPrefecture(pref.key);
-                      },
-                    ),
+                      // 震源ピン（リストタップ時のみ表示）
+                      if (selected != null)
+                        Center(
+                          child: Transform.translate(
+                            offset: const Offset(0, -16),
+                            child: Icon(
+                              Icons.location_on,
+                              size: 36,
+                              color: IntensityColor.fromIntensity(
+                                  selected.maxIntensity),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ],
@@ -86,3 +103,4 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 }
+

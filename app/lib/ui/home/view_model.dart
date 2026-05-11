@@ -15,6 +15,9 @@ abstract class HomeScreenState with _$HomeScreenState {
     /// 地震データ（未取得はnull）
     EarthquakeResponse? earthquakeResponse,
 
+    /// 選択中の地震データ（リストタップ時）
+    Earthquake? selectedEarthquake,
+
     /// 選択中の都道府県コード（未選択はnull）
     String? selectedPrefecture,
 
@@ -46,6 +49,11 @@ class HomeScreenViewModel extends _$HomeScreenViewModel {
     );
   }
 
+  /// リストの地震項目タップ時
+  void selectEarthquake(Earthquake eq) {
+    state = state.copyWith(selectedEarthquake: eq);
+  }
+
   /// 都道府県タップ時に選択状態を更新
   void selectPrefecture(String prefKey) {
     state = state.copyWith(selectedPrefecture: prefKey);
@@ -53,6 +61,6 @@ class HomeScreenViewModel extends _$HomeScreenViewModel {
 
   /// 選択解除
   void clearSelection() {
-    state = state.copyWith(selectedPrefecture: null);
+    state = state.copyWith(selectedPrefecture: null, selectedEarthquake: null);
   }
 }

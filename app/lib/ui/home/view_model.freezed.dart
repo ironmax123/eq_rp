@@ -15,7 +15,8 @@ T _$identity<T>(T value) => value;
 mixin _$HomeScreenState {
 
 /// 地震データ（未取得はnull）
- EarthquakeResponse? get earthquakeResponse;/// 選択中の都道府県コード（未選択はnull）
+ EarthquakeResponse? get earthquakeResponse;/// 選択中の地震データ（リストタップ時）
+ Earthquake? get selectedEarthquake;/// 選択中の都道府県コード（未選択はnull）
  String? get selectedPrefecture;/// エラーメッセージ
  String? get errorMessage;
 /// Create a copy of HomeScreenState
@@ -28,16 +29,16 @@ $HomeScreenStateCopyWith<HomeScreenState> get copyWith => _$HomeScreenStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeScreenState&&(identical(other.earthquakeResponse, earthquakeResponse) || other.earthquakeResponse == earthquakeResponse)&&(identical(other.selectedPrefecture, selectedPrefecture) || other.selectedPrefecture == selectedPrefecture)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeScreenState&&(identical(other.earthquakeResponse, earthquakeResponse) || other.earthquakeResponse == earthquakeResponse)&&(identical(other.selectedEarthquake, selectedEarthquake) || other.selectedEarthquake == selectedEarthquake)&&(identical(other.selectedPrefecture, selectedPrefecture) || other.selectedPrefecture == selectedPrefecture)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,earthquakeResponse,selectedPrefecture,errorMessage);
+int get hashCode => Object.hash(runtimeType,earthquakeResponse,selectedEarthquake,selectedPrefecture,errorMessage);
 
 @override
 String toString() {
-  return 'HomeScreenState(earthquakeResponse: $earthquakeResponse, selectedPrefecture: $selectedPrefecture, errorMessage: $errorMessage)';
+  return 'HomeScreenState(earthquakeResponse: $earthquakeResponse, selectedEarthquake: $selectedEarthquake, selectedPrefecture: $selectedPrefecture, errorMessage: $errorMessage)';
 }
 
 
@@ -48,11 +49,11 @@ abstract mixin class $HomeScreenStateCopyWith<$Res>  {
   factory $HomeScreenStateCopyWith(HomeScreenState value, $Res Function(HomeScreenState) _then) = _$HomeScreenStateCopyWithImpl;
 @useResult
 $Res call({
- EarthquakeResponse? earthquakeResponse, String? selectedPrefecture, String? errorMessage
+ EarthquakeResponse? earthquakeResponse, Earthquake? selectedEarthquake, String? selectedPrefecture, String? errorMessage
 });
 
 
-$EarthquakeResponseCopyWith<$Res>? get earthquakeResponse;
+$EarthquakeResponseCopyWith<$Res>? get earthquakeResponse;$EarthquakeCopyWith<$Res>? get selectedEarthquake;
 
 }
 /// @nodoc
@@ -65,10 +66,11 @@ class _$HomeScreenStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeScreenState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? earthquakeResponse = freezed,Object? selectedPrefecture = freezed,Object? errorMessage = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? earthquakeResponse = freezed,Object? selectedEarthquake = freezed,Object? selectedPrefecture = freezed,Object? errorMessage = freezed,}) {
   return _then(_self.copyWith(
 earthquakeResponse: freezed == earthquakeResponse ? _self.earthquakeResponse : earthquakeResponse // ignore: cast_nullable_to_non_nullable
-as EarthquakeResponse?,selectedPrefecture: freezed == selectedPrefecture ? _self.selectedPrefecture : selectedPrefecture // ignore: cast_nullable_to_non_nullable
+as EarthquakeResponse?,selectedEarthquake: freezed == selectedEarthquake ? _self.selectedEarthquake : selectedEarthquake // ignore: cast_nullable_to_non_nullable
+as Earthquake?,selectedPrefecture: freezed == selectedPrefecture ? _self.selectedPrefecture : selectedPrefecture // ignore: cast_nullable_to_non_nullable
 as String?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -84,6 +86,18 @@ $EarthquakeResponseCopyWith<$Res>? get earthquakeResponse {
 
   return $EarthquakeResponseCopyWith<$Res>(_self.earthquakeResponse!, (value) {
     return _then(_self.copyWith(earthquakeResponse: value));
+  });
+}/// Create a copy of HomeScreenState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$EarthquakeCopyWith<$Res>? get selectedEarthquake {
+    if (_self.selectedEarthquake == null) {
+    return null;
+  }
+
+  return $EarthquakeCopyWith<$Res>(_self.selectedEarthquake!, (value) {
+    return _then(_self.copyWith(selectedEarthquake: value));
   });
 }
 }
@@ -167,10 +181,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( EarthquakeResponse? earthquakeResponse,  String? selectedPrefecture,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( EarthquakeResponse? earthquakeResponse,  Earthquake? selectedEarthquake,  String? selectedPrefecture,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HomeScreenState() when $default != null:
-return $default(_that.earthquakeResponse,_that.selectedPrefecture,_that.errorMessage);case _:
+return $default(_that.earthquakeResponse,_that.selectedEarthquake,_that.selectedPrefecture,_that.errorMessage);case _:
   return orElse();
 
 }
@@ -188,10 +202,10 @@ return $default(_that.earthquakeResponse,_that.selectedPrefecture,_that.errorMes
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( EarthquakeResponse? earthquakeResponse,  String? selectedPrefecture,  String? errorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( EarthquakeResponse? earthquakeResponse,  Earthquake? selectedEarthquake,  String? selectedPrefecture,  String? errorMessage)  $default,) {final _that = this;
 switch (_that) {
 case _HomeScreenState():
-return $default(_that.earthquakeResponse,_that.selectedPrefecture,_that.errorMessage);case _:
+return $default(_that.earthquakeResponse,_that.selectedEarthquake,_that.selectedPrefecture,_that.errorMessage);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -208,10 +222,10 @@ return $default(_that.earthquakeResponse,_that.selectedPrefecture,_that.errorMes
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( EarthquakeResponse? earthquakeResponse,  String? selectedPrefecture,  String? errorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( EarthquakeResponse? earthquakeResponse,  Earthquake? selectedEarthquake,  String? selectedPrefecture,  String? errorMessage)?  $default,) {final _that = this;
 switch (_that) {
 case _HomeScreenState() when $default != null:
-return $default(_that.earthquakeResponse,_that.selectedPrefecture,_that.errorMessage);case _:
+return $default(_that.earthquakeResponse,_that.selectedEarthquake,_that.selectedPrefecture,_that.errorMessage);case _:
   return null;
 
 }
@@ -223,11 +237,13 @@ return $default(_that.earthquakeResponse,_that.selectedPrefecture,_that.errorMes
 
 
 class _HomeScreenState implements HomeScreenState {
-  const _HomeScreenState({this.earthquakeResponse, this.selectedPrefecture, this.errorMessage});
+  const _HomeScreenState({this.earthquakeResponse, this.selectedEarthquake, this.selectedPrefecture, this.errorMessage});
   
 
 /// 地震データ（未取得はnull）
 @override final  EarthquakeResponse? earthquakeResponse;
+/// 選択中の地震データ（リストタップ時）
+@override final  Earthquake? selectedEarthquake;
 /// 選択中の都道府県コード（未選択はnull）
 @override final  String? selectedPrefecture;
 /// エラーメッセージ
@@ -243,16 +259,16 @@ _$HomeScreenStateCopyWith<_HomeScreenState> get copyWith => __$HomeScreenStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeScreenState&&(identical(other.earthquakeResponse, earthquakeResponse) || other.earthquakeResponse == earthquakeResponse)&&(identical(other.selectedPrefecture, selectedPrefecture) || other.selectedPrefecture == selectedPrefecture)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeScreenState&&(identical(other.earthquakeResponse, earthquakeResponse) || other.earthquakeResponse == earthquakeResponse)&&(identical(other.selectedEarthquake, selectedEarthquake) || other.selectedEarthquake == selectedEarthquake)&&(identical(other.selectedPrefecture, selectedPrefecture) || other.selectedPrefecture == selectedPrefecture)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,earthquakeResponse,selectedPrefecture,errorMessage);
+int get hashCode => Object.hash(runtimeType,earthquakeResponse,selectedEarthquake,selectedPrefecture,errorMessage);
 
 @override
 String toString() {
-  return 'HomeScreenState(earthquakeResponse: $earthquakeResponse, selectedPrefecture: $selectedPrefecture, errorMessage: $errorMessage)';
+  return 'HomeScreenState(earthquakeResponse: $earthquakeResponse, selectedEarthquake: $selectedEarthquake, selectedPrefecture: $selectedPrefecture, errorMessage: $errorMessage)';
 }
 
 
@@ -263,11 +279,11 @@ abstract mixin class _$HomeScreenStateCopyWith<$Res> implements $HomeScreenState
   factory _$HomeScreenStateCopyWith(_HomeScreenState value, $Res Function(_HomeScreenState) _then) = __$HomeScreenStateCopyWithImpl;
 @override @useResult
 $Res call({
- EarthquakeResponse? earthquakeResponse, String? selectedPrefecture, String? errorMessage
+ EarthquakeResponse? earthquakeResponse, Earthquake? selectedEarthquake, String? selectedPrefecture, String? errorMessage
 });
 
 
-@override $EarthquakeResponseCopyWith<$Res>? get earthquakeResponse;
+@override $EarthquakeResponseCopyWith<$Res>? get earthquakeResponse;@override $EarthquakeCopyWith<$Res>? get selectedEarthquake;
 
 }
 /// @nodoc
@@ -280,10 +296,11 @@ class __$HomeScreenStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeScreenState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? earthquakeResponse = freezed,Object? selectedPrefecture = freezed,Object? errorMessage = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? earthquakeResponse = freezed,Object? selectedEarthquake = freezed,Object? selectedPrefecture = freezed,Object? errorMessage = freezed,}) {
   return _then(_HomeScreenState(
 earthquakeResponse: freezed == earthquakeResponse ? _self.earthquakeResponse : earthquakeResponse // ignore: cast_nullable_to_non_nullable
-as EarthquakeResponse?,selectedPrefecture: freezed == selectedPrefecture ? _self.selectedPrefecture : selectedPrefecture // ignore: cast_nullable_to_non_nullable
+as EarthquakeResponse?,selectedEarthquake: freezed == selectedEarthquake ? _self.selectedEarthquake : selectedEarthquake // ignore: cast_nullable_to_non_nullable
+as Earthquake?,selectedPrefecture: freezed == selectedPrefecture ? _self.selectedPrefecture : selectedPrefecture // ignore: cast_nullable_to_non_nullable
 as String?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -300,6 +317,18 @@ $EarthquakeResponseCopyWith<$Res>? get earthquakeResponse {
 
   return $EarthquakeResponseCopyWith<$Res>(_self.earthquakeResponse!, (value) {
     return _then(_self.copyWith(earthquakeResponse: value));
+  });
+}/// Create a copy of HomeScreenState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$EarthquakeCopyWith<$Res>? get selectedEarthquake {
+    if (_self.selectedEarthquake == null) {
+    return null;
+  }
+
+  return $EarthquakeCopyWith<$Res>(_self.selectedEarthquake!, (value) {
+    return _then(_self.copyWith(selectedEarthquake: value));
   });
 }
 }
