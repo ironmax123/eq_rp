@@ -36,30 +36,40 @@ class HomeScreen extends ConsumerWidget {
                   child: EqListWidget(
                     earthquakes: state.earthquakeResponse?.earthquakes,
                     selectedId: state.selectedEarthquake?.id,
-                    onTap: (eq) => vm.selectEarthquake(eq),
+                    onTap: (eq) {
+                      if (state.selectedEarthquake?.id == eq.id) {
+                        vm.clearSelection();
+                      } else {
+                        vm.selectEarthquake(eq);
+                      }
+                    },
                   ),
                 ),
                 Expanded(
                   flex: 8,
                   child: Stack(
                     children: [
-                      ClipRect(
-                        child: JapanColorMapsWidget(
-                          key: ValueKey('${selected?.epicenter.latitude ?? 0}_${selected?.epicenter.longitude ?? 0}'),
-                          center: LatLng(
-                            latitude: selected?.epicenter.latitude ?? 36.0,
-                            longitude: selected?.epicenter.longitude ?? 138.0,
+                      AbsorbPointer(
+                        absorbing: selected != null,
+                        child: ClipRect(
+                          child: JapanColorMapsWidget(
+                            key: ValueKey(
+                                '${selected?.epicenter.latitude ?? 0}_${selected?.epicenter.longitude ?? 0}'),
+                            center: LatLng(
+                              latitude: selected?.epicenter.latitude ?? 36.0,
+                              longitude: selected?.epicenter.longitude ?? 138.0,
+                            ),
+                            backgroundColor:
+                                const Color.fromARGB(255, 137, 169, 236),
+                            otherCountryColor:
+                                const Color.fromARGB(255, 1, 57, 52),
+                            mapColor: const Color.fromARGB(255, 20, 121, 32)
+                                .withAlpha(128),
+                            prefecture: prefecture,
+                            onPrefectureTap: (pref) {
+                              vm.selectPrefecture(pref.key);
+                            },
                           ),
-                          backgroundColor:
-                              const Color.fromARGB(255, 137, 169, 236),
-                          otherCountryColor:
-                              const Color.fromARGB(255, 1, 57, 52),
-                          mapColor: const Color.fromARGB(255, 20, 121, 32)
-                              .withAlpha(128),
-                          prefecture: prefecture,
-                          onPrefectureTap: (pref) {
-                            vm.selectPrefecture(pref.key);
-                          },
                         ),
                       ),
                       // 震源ピン（リストタップ時のみ表示）
@@ -73,6 +83,18 @@ class HomeScreen extends ConsumerWidget {
                               color: IntensityColor.fromIntensity(
                                   selected.maxIntensity),
                             ),
+                          ),
+                        ),
+                      // 選択解除ボタン（右上）
+                      if (selected != null)
+                        Positioned(
+                          top: 16,
+                          right: 16,
+                          child: FloatingActionButton.small(
+                            onPressed: () => vm.clearSelection(),
+                            backgroundColor: Colors.black54,
+                            foregroundColor: Colors.white,
+                            child: const Icon(Icons.close),
                           ),
                         ),
                     ],
