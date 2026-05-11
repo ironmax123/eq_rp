@@ -15,6 +15,12 @@
   - **API Endpoint (EEW)**: `http://www.kmoni.bosai.go.jp/webservice/hypo/eew/`
   - **概要**: 日本全国の強震観測網（K-NET, KiK-net）のデータをリアルタイムに提供するサービスです。本プロジェクトでは緊急地震速報（EEW）の情報を取得し、各都道府県の震度などの表示に活用しています。
 
+- **気象庁 防災情報JSON / 履歴用CSV**
+  - **提供元**: [気象庁 (JMA)](https://www.jma.go.jp/)
+  - **API Endpoint**: `https://www.jma.go.jp/bosai/quake/data/list.json`
+  - **フォールバック**: `api/data/hist.csv` (ローカル保存の履歴CSV)
+  - **概要**: 過去の地震履歴（History）の初期データを取得するために気象庁のAPIを利用しています。API通信に失敗した場合は、フォールバックとしてローカルに保存されている `hist.csv` を読み込んで履歴データを構築します。
+
 ## 主要な利用パッケージ (OSS / pub.dev)
 
 Flutterアプリケーション(`/app`)では、以下の主要なパッケージを利用しています。
