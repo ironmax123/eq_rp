@@ -68,6 +68,9 @@ def parse_jma_csv(data: list) -> list:
         except Exception:
             pass
 
+        max_int_str = row.get("最大震度", "").replace("震度", "").translate(str.maketrans('０１２３４５６７８９', '0123456789')).strip()
+        max_int_str = max_int_str.replace("弱", "-").replace("強", "+")
+
         eq = {
             "id": f"hist_{row.get('地震の発生日')} {row.get('地震の発生時刻')}",
             "occurredAt": f"{row.get('地震の発生日')} {row.get('地震の発生時刻')}",
@@ -78,9 +81,9 @@ def parse_jma_csv(data: list) -> list:
                 "depth": depth
             },
             "magnitude": mag,
-            "maxIntensity": row.get("最大震度", "").replace("震度", ""),
+            "maxIntensity": max_int_str,
             "tsunami": False,
-            "areas": predict_prefecture_intensity(lat, lon, depth, mag, row.get("最大震度", "").replace("震度", "").strip())
+            "areas": predict_prefecture_intensity(lat, lon, depth, mag, max_int_str)
         }
         history_list.append(eq)
     return history_list

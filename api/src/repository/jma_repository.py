@@ -14,7 +14,7 @@ def fetch_local_csv():
     """フォールバック用のローカルCSVから生データを取得してdictのリストを返す"""
     csv_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "hist.csv")
     raw_data = []
-    with open(csv_path, "r", encoding="utf-8") as f:
+    with open(csv_path, "r", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         for row in reader:
             raw_data.append(row)
