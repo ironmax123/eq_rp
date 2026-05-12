@@ -22,35 +22,45 @@ from src.repository.kmoni_cache_repository import get_cache_state
 
 async def lcd_update_loop():
     if not HAS_LCD:
+        print("LCD1602 module not found or failed to import. LCD update skipped.")
         return
     
-    LCD1602.init(0x27, 1)
+    print("Initializing LCD1602...")
+    try:
+        # LCD初期化（失敗時に例外を投げる可能性があるためtry-exceptで囲む）
+        LCD1602.init(0x27, 1)
+        print("LCD1602 initialized successfully.")
+    except Exception as e:
+        print(f"LCD1602 initialization failed: {e}")
+        return
+
     last_mode = None
-    
     while True:
-        state = get_cache_state()
-        if state.is_eq_mode:
-            if last_mode != "eq":
-                LCD1602.clear()
-                last_mode = "eq"
-            
-            # 地震情報を表示
-            data = state.kmoni_cache_data
-            if data and data.get("earthquakes"):
-                eq = data["earthquakes"][0]
-                place = eq.get("epicenter", {}).get("name", "Unknown")
-                intensity = eq.get("maxIntensity", "-")
-                # LCD1602.write(x, y, text)
-                LCD1602.write(0, 0, f"EEW: {place[:11]}")
+        try:
+            state = get_cache_state()
+            if state.is_eq_mode:
+                if last_mode != "eq":
+                    LCD1602.clear()
+                    last_mode = "eq"
+                
+                # 地震検知時：日本語を避け、ASCII文字のみを表示
+                # LCD1602は標準で日本語（UTF-8）をサポートしていないため
+                LCD1602.write(0, 0, "EQ DETECTED!")
+                
+                intensity = "-"
+                if state.kmoni_cache_data and state.kmoni_cache_data.get("earthquakes"):
+                    eq = state.kmoni_cache_data["earthquakes"][0]
+                    intensity = eq.get("maxIntensity", "-")
+                
                 LCD1602.write(0, 1, f"Max Int: {intensity}")
             else:
-                LCD1602.write(0, 0, "EEW DETECTED!")
-        else:
-            if last_mode != "standby":
-                LCD1602.clear()
-                LCD1602.write(0, 0, "Status:")
-                LCD1602.write(0, 1, "Standby")
-                last_mode = "standby"
+                if last_mode != "standby":
+                    LCD1602.clear()
+                    LCD1602.write(0, 0, "Status:")
+                    LCD1602.write(0, 1, "Standby")
+                    last_mode = "standby"
+        except Exception as e:
+            print(f"LCD update error: {e}")
         
         await asyncio.sleep(1)
 
