@@ -51,16 +51,39 @@ Flutterアプリケーション(`/app`)では、以下の主要なパッケー�
 - **[cupertino_icons](https://pub.dev/packages/cupertino_icons)**
   - アプリ内でiOSスタイルのアイコンを利用するために組み込み。
 
-## APIアーキテクチャ構成
+## 利用ライブラリ (Python)
 
-FastAPIバックエンド（`/api`）は、関心事の分離（Separation of Concerns）を目的として、以下のようなレイヤードアーキテクチャを採用しています。
+FastAPIバックエンド（`/api`）では、以下の主要なライブラリを利用しています。
 
-- **`main.py`**: アプリケーションのエントリーポイント。FastAPIインスタンスの生成とルーターの登録を行います。
-- **`src/routes/`**: エンドポイントの定義（ルーティング）。リクエストを受け取り、適切なService層へ処理を委譲します。
-- **`src/services/`**: ビジネスロジック。データの加工や、Repositoryから取得したデータの組み立てを行います。
-- **`src/repository/`**: データアクセス層。外部API（強震モニタ、気象庁API）やローカルファイル（CSV）からのデータ取得処理を担当し、外部との通信部分を隠蔽します。
-- **`src/schemas/`**: Pydanticを用いたデータモデルの定義。リクエスト・レスポンスのバリデーションや型定義を行います。
-- **`src/intensity/`**: 震度計算などのドメイン特有の処理を行うモジュールです。
+- **[FastAPI](https://fastapi.tiangolo.com/)**
+  - 高パフォーマンスなAPIサーバーの構築に利用。
+- **[httpx](https://www.python-httpx.org/)**
+  - 強震モニタや気象庁APIなどの外部サービスとの非同期・同期通信に利用。
+- **[pydantic](https://docs.pydantic.dev/)**
+  - データバリデーションと設定管理（FastAPIのコアとして動作）。
+
+## アプリケーションアーキテクチャ構成
+
+各コンポーネントは役割ごとに明確に分離されています。
+
+### バックエンド (FastAPI)
+関心事の分離（Separation of Concerns）を目的として、以下のようなレイヤードアーキテクチャを採用しています。
+
+- **`main.py`**: アプリケーションのエントリーポイント。
+- **`src/routes/`**: エンドポイントの定義（ルーティング）。
+- **`src/services/`**: ビジネスロジック。キャッシュ制御やデータの加工を担当。
+- **`src/repository/`**: データアクセス層。外部APIやローカルCSVとの通信を担当。
+- **`src/schemas/`**: データモデルの定義。
+- **`src/intensity/`**: 震度計算などのドメインロジック。
+
+### フロントエンド (Flutter)
+Riverpodを用いたモダンなLayered Architectureを採用しています。
+
+- **`lib/main.dart`**: アプリの起動およびグローバルな設定。
+- **`lib/ui/`**: 表示層（Screens/Widgets）。`go_router`による遷移管理と、`japan_maps`による地図表示を行います。
+- **`lib/provider/`**: 状態管理・ロジック層。`Riverpod`を使用してAPI通信やアプリの状態を管理し、UIに提供します。
+- **`lib/model/`**: データモデル層。`Freezed`を用いてイミュータブルなデータ構造を定義します。
+- **`lib/util/`**: 共通ユーティリティ。震度別の色変換（Intensity Color Builder）やフォント設定などを担当します。
 
 ## 起動方法
 
