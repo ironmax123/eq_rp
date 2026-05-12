@@ -1,10 +1,10 @@
 import sys,os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from api.src.routes.eq_route import eq_root_router
-from api.src.routes.history_route import history_router
+from src.routes.eq_route import eq_root_router
+from src.routes.history_route import history_router
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from api.src.services.history_service import initialize_history
+from src.services.history_service import initialize_history
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
