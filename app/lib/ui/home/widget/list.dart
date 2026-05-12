@@ -1,31 +1,6 @@
 import 'package:app/model/earthquake.dart';
+import 'package:app/util/intensity_color.dart';
 import 'package:flutter/material.dart';
-
-/// 震度文字列 → 背景色
-Color _intensityColor(String intensity) {
-  switch (intensity) {
-    case '1':
-      return const Color(0xFF4a90d9);
-    case '2':
-      return const Color(0xFF3a7abf);
-    case '3':
-      return const Color(0xFF2e8b57);
-    case '4':
-      return const Color(0xFFe6c229);
-    case '5弱':
-      return const Color(0xFFe07b39);
-    case '5強':
-      return const Color(0xFFd45500);
-    case '6弱':
-      return const Color(0xFFc0392b);
-    case '6強':
-      return const Color(0xFF922b21);
-    case '7':
-      return const Color(0xFF6c1a3d);
-    default:
-      return const Color(0xFF2a2a4a);
-  }
-}
 
 String _formatTime(String timeString) {
   // yyyyMMddHHmmss 形式 (14文字) の場合の処理
@@ -75,7 +50,7 @@ class EqListWidget extends StatelessWidget {
       itemCount: earthquakes!.length,
       itemBuilder: (context, index) {
         final eq = earthquakes![index];
-        final bgColor = _intensityColor(eq.maxIntensity);
+        final bgColor = IntensityColor.fromIntensity(eq.maxIntensity);
         final isSelected = selectedId == eq.id;
         return GestureDetector(
           onTap: () => onTap?.call(eq),
