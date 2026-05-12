@@ -28,41 +28,46 @@ async def lcd_update_loop():
     if not LCD1602:
         return
     
-    # LCD初期化
-    try:
-        LCD1602.init(0x27, 1)
-    except Exception:
-        # 初期化失敗時はタスクを終了
-        return
+    # LCD初期化（自動検知に任せるため引数なしで実行）
+    lcd_initialized = False
+    while not lcd_initialized:
+        try:
+            # LCD1602.pyのinitは内部でi2cスキャンを行うため、デバイスが見つかるまでリトライ
+            LCD1602.init()
+            lcd_initialized = True
+        except Exception:
+            await asyncio.sleep(5) # 5秒待機してリトライ
+            continue
 
     last_mode = None
-    
     while True:
-        state = get_cache_state()
-        
-        if state.is_eq_mode:
+        try:
+            state = get_cache_state()
+            if state.is_eq_mode:
             # 地震検知モード
-            if last_mode != "eq":
-                LCD1602.clear()
-                last_mode = "eq"
-            
-            # LCD1602は標準で日本語を表示できないため、英字で通知
-            LCD1602.write(0, 0, "EARTHQUAKE!")
-            
-            intensity = "-"
-            if state.kmoni_cache_data and state.kmoni_cache_data.get("earthquakes"):
-                eq = state.kmoni_cache_data["earthquakes"][0]
-                intensity = eq.get("maxIntensity", "-")
-            
-            LCD1602.write(0, 1, f"MAX INT: {intensity}")
-            
-        else:
-            # 待機モード
-            if last_mode != "standby":
-                LCD1602.clear()
-                LCD1602.write(0, 0, "STATUS:")
-                LCD1602.write(0, 1, "STANDBY")
-                last_mode = "standby"
+                if last_mode != "eq":
+                    LCD1602.clear()
+                    last_mode = "eq"
+                
+                # LCD1602は標準で日本語を表示できないため、英字で通知
+                LCD1602.write(0, 0, "EARTHQUAKE!")
+                
+                intensity = "-"
+                if state.kmoni_cache_data and state.kmoni_cache_data.get("earthquakes"):
+                    eq = state.kmoni_cache_data["earthquakes"][0]
+                    intensity = eq.get("maxIntensity", "-")
+                
+                LCD1602.write(0, 1, f"MAX INT: {intensity}")
+                
+            else:
+                # 待機モード
+                if last_mode != "standby":
+                    LCD1602.clear()
+                    LCD1602.write(0, 0, "STATUS:")
+                    LCD1602.write(0, 1, "STANDBY")
+                    last_mode = "standby"
+        except Exception:
+            pass
         
         await asyncio.sleep(1)
 
