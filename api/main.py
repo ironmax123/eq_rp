@@ -1,5 +1,11 @@
-import sys,os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import sys, os
+# 実行環境に合わせてインポートパスを調整
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.append(current_dir)
+parent_dir = os.path.dirname(current_dir)
+if parent_dir not in sys.path:
+    sys.path.append(parent_dir)
 from src.routes.eq_route import eq_root_router
 from src.routes.history_route import history_router
 from fastapi import FastAPI
