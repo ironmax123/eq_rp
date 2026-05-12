@@ -13,7 +13,6 @@ if parent_dir not in sys.path:
 try:
     import LCD1602
 except ImportError:
-    # 開発環境等でモジュールがない場合はNoneにしておく
     LCD1602 = None
 
 from src.routes.eq_route import eq_root_router
@@ -28,28 +27,26 @@ async def lcd_update_loop():
     if not LCD1602:
         return
     
-    # LCD初期化（自動検知に任せるため引数なしで実行）
-    lcd_initialized = False
-    while not lcd_initialized:
-        try:
-            # LCD1602.pyのinitは内部でi2cスキャンを行うため、デバイスが見つかるまでリトライ
-            LCD1602.init()
-            lcd_initialized = True
-        except Exception:
-            await asyncio.sleep(5) # 5秒待機してリトライ
-            continue
+    # 参考コード (1.7_Lcd1602_zero.py) の通りに初期化
+    try:
+        LCD1602.init(0x27, 1)
+    except Exception as e:
+        print(f"LCD Init Error: {e}")
+        return
 
     last_mode = None
+    
     while True:
         try:
             state = get_cache_state()
+            
             if state.is_eq_mode:
-            # 地震検知モード
+                # 地震検知モード
                 if last_mode != "eq":
                     LCD1602.clear()
                     last_mode = "eq"
                 
-                # LCD1602は標準で日本語を表示できないため、英字で通知
+                # 1行目(y=0)にメッセージ、2行目(y=1)に震度を表示
                 LCD1602.write(0, 0, "EARTHQUAKE!")
                 
                 intensity = "-"
@@ -58,7 +55,6 @@ async def lcd_update_loop():
                     intensity = eq.get("maxIntensity", "-")
                 
                 LCD1602.write(0, 1, f"MAX INT: {intensity}")
-                
             else:
                 # 待機モード
                 if last_mode != "standby":
@@ -66,8 +62,8 @@ async def lcd_update_loop():
                     LCD1602.write(0, 0, "STATUS:")
                     LCD1602.write(0, 1, "STANDBY")
                     last_mode = "standby"
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"LCD Write Error: {e}")
         
         await asyncio.sleep(1)
 
