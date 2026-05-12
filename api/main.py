@@ -1,4 +1,5 @@
 import sys, os
+import asyncio
 
 # 実行環境に合わせてインポートパスを調整
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -8,17 +9,13 @@ parent_dir = os.path.dirname(current_dir)
 if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
-import asyncio
-import traceback
+# LCD1602モジュールのインポート
 try:
     import LCD1602
-    HAS_LCD = True
-    IMPORT_ERROR = None
-except ImportError as e:
-    HAS_LCD = False
-    IMPORT_ERROR = str(e)
-    # 詳細なスタックトレースも出力（デバッグ用）
-    # traceback.print_exc()
+except ImportError:
+    # 開発環境等でモジュールがない場合はNoneにしておく
+    LCD1602 = None
+
 from src.routes.eq_route import eq_root_router
 from src.routes.history_route import history_router
 from fastapi import FastAPI
@@ -27,52 +24,51 @@ from src.services.history_service import initialize_history
 from src.repository.kmoni_cache_repository import get_cache_state
 
 async def lcd_update_loop():
-    if not HAS_LCD:
-        print(f"LCD1602 module import failed: {IMPORT_ERROR}. LCD update skipped.")
+    """LCD表示を定期的に更新するバックグラウンドタスク"""
+    if not LCD1602:
         return
     
-    print("Initializing LCD1602...")
+    # LCD初期化
     try:
-        # LCD初期化（失敗時に例外を投げる可能性があるためtry-exceptで囲む）
         LCD1602.init(0x27, 1)
-        print("LCD1602 initialized successfully.")
-    except Exception as e:
-        print(f"LCD1602 initialization failed: {e}")
+    except Exception:
+        # 初期化失敗時はタスクを終了
         return
 
     last_mode = None
+    
     while True:
-        try:
-            state = get_cache_state()
-            if state.is_eq_mode:
-                if last_mode != "eq":
-                    LCD1602.clear()
-                    last_mode = "eq"
-                
-                # 地震検知時：日本語を避け、ASCII文字のみを表示
-                # LCD1602は標準で日本語（UTF-8）をサポートしていないため
-                LCD1602.write(0, 0, "EQ DETECTED!")
-                
-                intensity = "-"
-                if state.kmoni_cache_data and state.kmoni_cache_data.get("earthquakes"):
-                    eq = state.kmoni_cache_data["earthquakes"][0]
-                    intensity = eq.get("maxIntensity", "-")
-                
-                LCD1602.write(0, 1, f"Max Int: {intensity}")
-            else:
-                if last_mode != "standby":
-                    LCD1602.clear()
-                    LCD1602.write(0, 0, "Status:")
-                    LCD1602.write(0, 1, "Standby")
-                    last_mode = "standby"
-        except Exception as e:
-            print(f"LCD update error: {e}")
+        state = get_cache_state()
+        
+        if state.is_eq_mode:
+            # 地震検知モード
+            if last_mode != "eq":
+                LCD1602.clear()
+                last_mode = "eq"
+            
+            # LCD1602は標準で日本語を表示できないため、英字で通知
+            LCD1602.write(0, 0, "EARTHQUAKE!")
+            
+            intensity = "-"
+            if state.kmoni_cache_data and state.kmoni_cache_data.get("earthquakes"):
+                eq = state.kmoni_cache_data["earthquakes"][0]
+                intensity = eq.get("maxIntensity", "-")
+            
+            LCD1602.write(0, 1, f"MAX INT: {intensity}")
+            
+        else:
+            # 待機モード
+            if last_mode != "standby":
+                LCD1602.clear()
+                LCD1602.write(0, 0, "STATUS:")
+                LCD1602.write(0, 1, "STANDBY")
+                last_mode = "standby"
         
         await asyncio.sleep(1)
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # 履歴データの初期化
     initialize_history()
     # LCD更新タスクをバックグラウンドで開始
     asyncio.create_task(lcd_update_loop())
