@@ -1,3 +1,5 @@
+from src.intensity.formula import predict_prefecture_intensity
+
 def eq_schemas(response):
     try:
         data = response.json()
@@ -46,7 +48,7 @@ def eq_schemas(response):
         "magnitude": mag,
         "maxIntensity": data.get("calcintensity", ""),
         "tsunami": False,
-        "areas": []
+        "areas": predict_prefecture_intensity(lat, lon, depth, mag, data.get("calcintensity", ""))
     }
 
     return {"earthquakes": [eq]}

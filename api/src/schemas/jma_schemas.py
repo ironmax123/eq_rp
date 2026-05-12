@@ -1,4 +1,5 @@
 import re
+from src.intensity.formula import predict_prefecture_intensity
 
 def parse_cod(cod: str):
     # e.g. "+40.3+141.2-10000" or "+36.5-137.2-0"
@@ -37,7 +38,7 @@ def parse_jma_json(data: list) -> list:
                 "magnitude": mag,
                 "maxIntensity": item.get("maxi", "0"),
                 "tsunami": False,
-                "areas": []
+                "areas": predict_prefecture_intensity(lat, lon, depth, mag, item.get("maxi", ""))
             }
             history_list.append(eq)
     return history_list
@@ -79,7 +80,7 @@ def parse_jma_csv(data: list) -> list:
             "magnitude": mag,
             "maxIntensity": row.get("最大震度", "").replace("震度", ""),
             "tsunami": False,
-            "areas": []
+            "areas": predict_prefecture_intensity(lat, lon, depth, mag, row.get("最大震度", "").replace("震度", "").strip())
         }
         history_list.append(eq)
     return history_list
