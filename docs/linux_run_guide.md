@@ -40,10 +40,6 @@ Docker でビルドされた Linux 向け Flutter アプリケーション（ARM
 - **GUI 環境**: このアプリはデスクトップアプリ（GTK）であるため、X11 または Wayland が動作している GUI 環境が必要です。
 
 ```
-sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
-sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1
-
-sudo rm -f /etc/resolv.conf
-echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf
+python3 -c 'from src.intensity.formula import predict_prefecture_intensity; print(predict_prefecture_intensity(35.0, 135.0, 10, 5.0, "3"))'
 
 ```
