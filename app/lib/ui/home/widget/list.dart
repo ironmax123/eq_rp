@@ -27,9 +27,19 @@ Color _intensityColor(String intensity) {
   }
 }
 
-String _formatTime(String isoString) {
+String _formatTime(String timeString) {
+  // yyyyMMddHHmmss 形式 (14文字) の場合の処理
+  if (timeString.length == 14 && int.tryParse(timeString) != null) {
+    final y = timeString.substring(0, 4);
+    final m = timeString.substring(4, 6);
+    final d = timeString.substring(6, 8);
+    final h = timeString.substring(8, 10);
+    final min = timeString.substring(10, 12);
+    return '$y/$m/$d $h:$min';
+  }
+
   try {
-    final dt = DateTime.parse(isoString).toLocal();
+    final dt = DateTime.parse(timeString).toLocal();
     final y = dt.year.toString().padLeft(4, '0');
     final m = dt.month.toString().padLeft(2, '0');
     final d = dt.day.toString().padLeft(2, '0');
@@ -37,7 +47,7 @@ String _formatTime(String isoString) {
     final min = dt.minute.toString().padLeft(2, '0');
     return '$y/$m/$d $h:$min';
   } catch (e) {
-    return isoString;
+    return timeString;
   }
 }
 
