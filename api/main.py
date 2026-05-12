@@ -1,10 +1,4 @@
 import sys, os
-import asyncio
-try:
-    import LCD1602
-    HAS_LCD = True
-except ImportError:
-    HAS_LCD = False
 
 # 実行環境に合わせてインポートパスを調整
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -13,6 +7,13 @@ if current_dir not in sys.path:
 parent_dir = os.path.dirname(current_dir)
 if parent_dir not in sys.path:
     sys.path.append(parent_dir)
+
+import asyncio
+try:
+    import LCD1602
+    HAS_LCD = True
+except ImportError:
+    HAS_LCD = False
 from src.routes.eq_route import eq_root_router
 from src.routes.history_route import history_router
 from fastapi import FastAPI
