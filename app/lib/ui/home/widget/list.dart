@@ -78,14 +78,16 @@ class EqListWidget extends StatelessWidget {
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 13,
+                            fontSize: 24,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.black38,
                           borderRadius: BorderRadius.circular(4),
@@ -94,7 +96,7 @@ class EqListWidget extends StatelessWidget {
                           '震度${eq.maxIntensity}',
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 11,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -114,13 +116,17 @@ class EqListWidget extends StatelessWidget {
                       Text(
                         'M${eq.magnitude.toStringAsFixed(1)}',
                         style: const TextStyle(
-                            color: Colors.white70, fontSize: 11),
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
                       ),
                       if (eq.tsunami) ...[
                         const SizedBox(width: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 4, vertical: 1),
+                            horizontal: 4,
+                            vertical: 1,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.cyanAccent.shade700,
                             borderRadius: BorderRadius.circular(3),
@@ -128,9 +134,10 @@ class EqListWidget extends StatelessWidget {
                           child: const Text(
                             '津波',
                             style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold),
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ],
@@ -145,4 +152,3 @@ class EqListWidget extends StatelessWidget {
     );
   }
 }
-
