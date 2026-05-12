@@ -27,7 +27,8 @@ Prefecture buildPrefectureColors({
   Color get(String key) {
     final intensity = intensityMap[key];
     if (intensity == null) return defaultColor;
-    return IntensityColor.fromIntensity(intensity);
+    // 地図描画用: withAlpha(128) で半透明（約50%）に変換
+    return IntensityColor.fromIntensity(intensity).withAlpha(128);
   }
 
   return Prefecture(
@@ -101,7 +102,9 @@ int _intensityRank(String intensity) {
   return ranks[intensity] ?? 0;
 }
 
-/// 日本語都道府県名 → Prefectureフィールドキー
+/// 都道府県名 → Prefectureフィールドキー
+/// - 日本語名（例: '北海道'）→ 英語キー（例: 'hokkaido'）に変換
+/// - 英語キー（例: 'hokkaido'）→ そのまま返す（APIが英語で返す場合に対応）
 String? _normalize(String name) {
   const map = {
     '北海道': 'hokkaido',
@@ -152,5 +155,14 @@ String? _normalize(String name) {
     '鹿児島県': 'kagoshima',
     '沖縄県': 'okinawa',
   };
-  return map[name];
+
+  // 日本語名からの変換を先に試みる
+  final fromJapanese = map[name];
+  if (fromJapanese != null) return fromJapanese;
+
+  // すでに英語キー（APIが英語で返す場合）はそのままパススルー
+  if (map.values.contains(name)) return name;
+
+  return null;
 }
+
