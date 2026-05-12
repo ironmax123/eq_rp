@@ -22,11 +22,11 @@ Docker でビルドされた Linux 向け Flutter アプリケーション（ARM
    chmod +x app
    ```
 
-3. **必要なライブラリ・フォントのインストール**
-   Ubuntu 等の Debian 系 OS の場合、動作に以下のパッケージが必要な場合があります。また、日本語を正しく表示（文字化け防止）するために日本語フォントが必要です。
+3. **必要なライブラリのインストール**
+   Ubuntu 等の Debian 系 OS の場合、動作に以下のパッケージが必要な場合があります。
    ```bash
    sudo apt update
-   sudo apt install libgtk-3-0 libblkid1 liblzma5 fonts-noto-cjk
+   sudo apt install libgtk-3-0 libblkid1 liblzma5
    ```
 
 ## 起動方法

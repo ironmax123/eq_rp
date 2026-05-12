@@ -33,7 +33,7 @@ final class HistoryEqProvider
   HistoryEq create() => HistoryEq();
 }
 
-String _$historyEqHash() => r'ef7b562af9bd7fc7b310584e3b3568724cea4044';
+String _$historyEqHash() => r'f1b7ee29f785737ffceb58cd34e30554c86ab0cd';
 
 abstract class _$HistoryEq extends $AsyncNotifier<EarthquakeResponse> {
   FutureOr<EarthquakeResponse> build();

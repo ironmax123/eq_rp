@@ -40,7 +40,7 @@ final class EqProvider extends $NotifierProvider<Eq, EarthquakeResponse?> {
   }
 }
 
-String _$eqHash() => r'4d6cf52a9078cad2578fc333b31e73c3c5633820';
+String _$eqHash() => r'39a951d87392966ef0cbd3e40f60edde7876f1ed';
 
 abstract class _$Eq extends $Notifier<EarthquakeResponse?> {
   EarthquakeResponse? build();

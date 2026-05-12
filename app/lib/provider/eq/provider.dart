@@ -17,11 +17,11 @@ class Eq extends _$Eq {
   @override
   EarthquakeResponse? build() {
     _startTimer();
-    
+
     ref.onDispose(() {
       _timer?.cancel();
     });
-    
+
     return null;
   }
 
@@ -32,14 +32,15 @@ class Eq extends _$Eq {
   Future<void> _poll() async {
     final client = ref.read(apiClientProvider(_baseUrl).notifier);
     final now = DateTime.now();
-    final timestamp = '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}';
+    final timestamp =
+        '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}';
 
     try {
       final response = await client.get('/v1/eq/$timestamp');
       if (response.statusCode == 200) {
-        final json = jsonDecode(response.body);
+        final json = jsonDecode(utf8.decode(response.bodyBytes));
         final data = EarthquakeResponse.fromJson(json);
-        
+
         // データがある場合のみ更新
         if (data.earthquakes.isNotEmpty) {
           state = data;

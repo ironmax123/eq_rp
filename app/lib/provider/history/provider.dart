@@ -21,7 +21,7 @@ class HistoryEq extends _$HistoryEq {
       throw Exception('Failed to fetch history: ${response.statusCode}');
     }
 
-    final json = jsonDecode(response.body);
+    final json = jsonDecode(utf8.decode(response.bodyBytes));
     return EarthquakeResponse.fromJson(json);
   }
 }
