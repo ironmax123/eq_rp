@@ -107,7 +107,7 @@ class EqListWidget extends StatelessWidget {
                   // 発生日時
                   Text(
                     _formatTime(eq.occurredAt),
-                    style: const TextStyle(color: Colors.white70, fontSize: 11),
+                    style: const TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                   const SizedBox(height: 2),
                   // M + 津波
@@ -117,7 +117,7 @@ class EqListWidget extends StatelessWidget {
                         'M${eq.magnitude.toStringAsFixed(1)}',
                         style: const TextStyle(
                           color: Colors.white70,
-                          fontSize: 14,
+                          fontSize: 16,
                         ),
                       ),
                       if (eq.tsunami) ...[
