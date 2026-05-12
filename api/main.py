@@ -9,11 +9,16 @@ if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
 import asyncio
+import traceback
 try:
     import LCD1602
     HAS_LCD = True
-except ImportError:
+    IMPORT_ERROR = None
+except ImportError as e:
     HAS_LCD = False
+    IMPORT_ERROR = str(e)
+    # 詳細なスタックトレースも出力（デバッグ用）
+    # traceback.print_exc()
 from src.routes.eq_route import eq_root_router
 from src.routes.history_route import history_router
 from fastapi import FastAPI
@@ -23,7 +28,7 @@ from src.repository.kmoni_cache_repository import get_cache_state
 
 async def lcd_update_loop():
     if not HAS_LCD:
-        print("LCD1602 module not found or failed to import. LCD update skipped.")
+        print(f"LCD1602 module import failed: {IMPORT_ERROR}. LCD update skipped.")
         return
     
     print("Initializing LCD1602...")
