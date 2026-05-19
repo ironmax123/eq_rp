@@ -12,7 +12,8 @@ if parent_dir not in sys.path:
 # LCD1602モジュールのインポート
 try:
     import LCD1602
-except ImportError:
+except ImportError as e:
+    print(f"LCD1602 import failed: {e}")
     LCD1602 = None
 
 from src.routes.eq_route import eq_root_router
@@ -24,15 +25,21 @@ from src.repository.kmoni_cache_repository import get_cache_state
 
 async def lcd_update_loop():
     """LCD表示を定期的に更新するバックグラウンドタスク"""
+    print("LCD update loop started.")
     if not LCD1602:
+        print("LCD1602 module is not available. LCD update skipped.")
         return
     
     # 参考コード (1.7_Lcd1602_zero.py) の通りに初期化
     try:
-        LCD1602.init(0x27, 1)
+        initialized = LCD1602.init(0x27, 1)
     except Exception as e:
         print(f"LCD Init Error: {e}")
         return
+    if initialized is False:
+        print("LCD1602 init returned False. LCD update stopped.")
+        return
+    print("LCD1602 initialized successfully.")
 
     last_mode = None
     
@@ -69,6 +76,7 @@ async def lcd_update_loop():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    print("FastAPI lifespan started.")
     # 履歴データの初期化
     initialize_history()
     # LCD更新タスクをバックグラウンドで開始
