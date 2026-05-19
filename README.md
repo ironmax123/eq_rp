@@ -61,6 +61,12 @@ FastAPIバックエンド（`/api`）では、以下の主要なライブラリ�
   - 強震モニタや気象庁APIなどの外部サービスとの非同期・同期通信に利用。
 - **[pydantic](https://docs.pydantic.dev/)**
   - データバリデーションと設定管理（FastAPIのコアとして動作）。
+- **[gpiozero](https://gpiozero.readthedocs.io/)**
+  - Raspberry PiのGPIOピン制御（パッシブブザー操作）に利用。
+- **[smbus2](https://pypi.org/project/smbus2/)**
+  - I2C経由のLCD1602ディスプレイ制御に利用。
+- **[lgpio](https://pypi.org/project/lgpio/)**
+  - gpiozeroのバックエンドとしてRaspberry Pi上のGPIO操作に利用。
 
 ## アプリケーションアーキテクチャ構成
 
@@ -69,7 +75,10 @@ FastAPIバックエンド（`/api`）では、以下の主要なライブラリ�
 ### バックエンド (FastAPI)
 関心事の分離（Separation of Concerns）を目的として、以下のようなレイヤードアーキテクチャを採用しています。
 
-- **`main.py`**: アプリケーションのエントリーポイント。
+- **`main.py`**: アプリケーションのエントリーポイント（Raspberry Pi実機用）。LCD表示ループ・ブザーアラートをバックグラウンドタスクとして起動します。
+- **`main_demo.py`**: デモ用エントリーポイント。起動から10秒後にダミーのEEWデータ（東京湾 震度5弱）を自動注入し、LCD・ブザーの動作を実機なしで確認できます。
+- **`LCD1602.py`**: I2C接続のLCD1602ディスプレイ制御モジュール。地震検知時に「EARTHQUAKE!」と最大震度、待機時に「STANDBY」を表示します。
+- **`buzzer.py`**: パッシブブザー（GPIO 17番ピン）の単体動作確認スクリプト。NHK風チャイム音列を再生します。
 - **`src/routes/`**: エンドポイントの定義（ルーティング）。
 - **`src/services/`**: ビジネスロジック。キャッシュ制御やデータの加工を担当。
 - **`src/repository/`**: データアクセス層。外部APIやローカルCSVとの通信を担当。
@@ -87,12 +96,19 @@ Riverpodを用いたモダンなLayered Architectureを採用しています。
 
 ## 起動方法
 
-### バックエンド (FastAPI)
+### バックエンド (FastAPI) — 実機用
 ```bash
 cd api
-fastapi dev
+fastapi dev main.py
 ```
 > **Note:** プロジェクトルールに従い、FastAPIはローカル起動のみを想定しています。
+
+### バックエンド (FastAPI) — デモモード（実機なし確認用）
+```bash
+cd api
+fastapi dev main_demo.py
+```
+起動から約10秒後にダミーEEWデータが注入され、LCD・ブザーの動作をシミュレートします。
 
 ### フロントエンド (Flutter)
 ```bash
