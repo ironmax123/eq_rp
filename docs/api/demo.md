@@ -2,14 +2,11 @@
 
 `api/main_demo.py` は、通常の FastAPI API と同じルート、キャッシュ戦略、地震モードを使いながら、起動から10秒後に EEW リポジトリだけをデモデータへ切り替えるデモ用エントリーポイントです。
 
-`api/mian_demo.py` は `api/main_demo.py` の互換ラッパーです。
-
 ## 起動方法
 
 ```bash
 cd api
 fastapi dev main_demo.py
-```
 ```
 
 ## 通常APIとの差分

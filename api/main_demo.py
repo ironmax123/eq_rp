@@ -13,7 +13,10 @@ parent_dir = os.path.dirname(current_dir)
 if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
-from main import lcd_update_loop
+try:
+    from .main import lcd_update_loop
+except ImportError:
+    from main import lcd_update_loop
 from src.repository.kmoni_cache_repository import get_cache_state
 from src.routes.eq_route import eq_root_router
 from src.routes.history_route import history_router
