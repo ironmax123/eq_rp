@@ -1,8 +1,17 @@
 import asyncio
 import copy
+import os
+import sys
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.append(current_dir)
+parent_dir = os.path.dirname(current_dir)
+if parent_dir not in sys.path:
+    sys.path.append(parent_dir)
 
 from main import lcd_update_loop
 from src.repository.kmoni_cache_repository import get_cache_state
