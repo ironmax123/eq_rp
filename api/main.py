@@ -1,6 +1,7 @@
 import sys, os
 import asyncio
 import importlib.util
+import time
 
 # 実行環境に合わせてインポートパスを調整
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -33,6 +34,12 @@ def load_lcd1602():
 
 LCD1602 = load_lcd1602()
 
+try:
+    from gpiozero import TonalBuzzer
+except ImportError as e:
+    print(f"TonalBuzzer import failed: {e}")
+    TonalBuzzer = None
+
 from src.routes.eq_route import eq_root_router
 from src.routes.history_route import history_router
 from fastapi import FastAPI
@@ -40,23 +47,61 @@ from contextlib import asynccontextmanager
 from src.services.history_service import initialize_history
 from src.repository.kmoni_cache_repository import get_cache_state
 
+BUZZER_PIN = 17
+BUZZER_TUNE = [
+    ("C#4", 0.2),
+    ("D4", 0.2),
+    (None, 0.2),
+    ("Eb4", 0.2),
+    ("E4", 0.2),
+    (None, 0.6),
+]
+
+
+def play_buzzer_tune():
+    if TonalBuzzer is None:
+        print("Buzzer alert skipped because TonalBuzzer is not available.")
+        return
+
+    buzzer = None
+    try:
+        buzzer = TonalBuzzer(BUZZER_PIN)
+        for note, duration in BUZZER_TUNE:
+            buzzer.play(note)
+            time.sleep(float(duration))
+    except Exception as e:
+        print(f"Buzzer play error: {e}")
+    finally:
+        if buzzer is not None:
+            try:
+                buzzer.stop()
+                buzzer.close()
+            except Exception as e:
+                print(f"Buzzer stop error: {e}")
+
+
+async def play_buzzer_alert():
+    await asyncio.to_thread(play_buzzer_tune)
+
+
 async def lcd_update_loop():
     """LCD表示を定期的に更新するバックグラウンドタスク"""
     print("LCD update loop started.")
+    lcd_ready = False
     if not LCD1602:
         print("LCD1602 module is not available. LCD update skipped.")
-        return
-    
-    # 参考コード (1.7_Lcd1602_zero.py) の通りに初期化
-    try:
-        initialized = LCD1602.init(0x27, 1)
-    except Exception as e:
-        print(f"LCD Init Error: {e}")
-        return
-    if initialized is False:
-        print("LCD1602 init returned False. LCD update stopped.")
-        return
-    print("LCD1602 initialized successfully.")
+    else:
+        # 参考コード (1.7_Lcd1602_zero.py) の通りに初期化
+        try:
+            initialized = LCD1602.init(0x27, 1)
+        except Exception as e:
+            print(f"LCD Init Error: {e}")
+        else:
+            if initialized is False:
+                print("LCD1602 init returned False. LCD update stopped.")
+            else:
+                lcd_ready = True
+                print("LCD1602 initialized successfully.")
 
     last_mode = None
     
@@ -67,24 +112,29 @@ async def lcd_update_loop():
             if state.is_eq_mode:
                 # 地震検知モード
                 if last_mode != "eq":
-                    LCD1602.clear()
+                    if lcd_ready:
+                        LCD1602.clear()
+                    asyncio.create_task(play_buzzer_alert())
                     last_mode = "eq"
                 
                 # 1行目(y=0)にメッセージ、2行目(y=1)に震度を表示
-                LCD1602.write(0, 0, "EARTHQUAKE!")
+                if lcd_ready:
+                    LCD1602.write(0, 0, "EARTHQUAKE!")
                 
                 intensity = "-"
                 if state.kmoni_cache_data and state.kmoni_cache_data.get("earthquakes"):
                     eq = state.kmoni_cache_data["earthquakes"][0]
                     intensity = eq.get("maxIntensity", "-")
                 
-                LCD1602.write(0, 1, f"MAX INT: {intensity}")
+                if lcd_ready:
+                    LCD1602.write(0, 1, f"MAX INT: {intensity}")
             else:
                 # 待機モード
                 if last_mode != "standby":
-                    LCD1602.clear()
-                    LCD1602.write(0, 0, "STATUS:")
-                    LCD1602.write(0, 1, "STANDBY")
+                    if lcd_ready:
+                        LCD1602.clear()
+                        LCD1602.write(0, 0, "STATUS:")
+                        LCD1602.write(0, 1, "STANDBY")
                     last_mode = "standby"
         except Exception as e:
             print(f"LCD Write Error: {e}")
