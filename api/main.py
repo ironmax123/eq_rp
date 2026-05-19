@@ -1,5 +1,6 @@
 import sys, os
 import asyncio
+import importlib.util
 
 # 実行環境に合わせてインポートパスを調整
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -9,12 +10,28 @@ parent_dir = os.path.dirname(current_dir)
 if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
-# LCD1602モジュールのインポート
-try:
-    import LCD1602
-except ImportError as e:
-    print(f"LCD1602 import failed: {e}")
-    LCD1602 = None
+def load_lcd1602():
+    """Load LCD1602.py placed next to this file without depending on cwd."""
+    module_path = os.path.join(current_dir, "LCD1602.py")
+    if not os.path.exists(module_path):
+        print(f"LCD1602 file not found: {module_path}")
+        return None
+
+    try:
+        spec = importlib.util.spec_from_file_location("LCD1602", module_path)
+        if spec is None or spec.loader is None:
+            print(f"LCD1602 import spec could not be created: {module_path}")
+            return None
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        print(f"LCD1602 loaded from: {module_path}")
+        return module
+    except Exception as e:
+        print(f"LCD1602 import failed from {module_path}: {type(e).__name__}: {e}")
+        return None
+
+
+LCD1602 = load_lcd1602()
 
 from src.routes.eq_route import eq_root_router
 from src.routes.history_route import history_router
