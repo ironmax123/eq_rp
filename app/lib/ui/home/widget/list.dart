@@ -65,7 +65,7 @@ class EqListWidget extends StatelessWidget {
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -78,7 +78,8 @@ class EqListWidget extends StatelessWidget {
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 24,
+                            fontSize: 20,
+                            height: 1.15,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -103,29 +104,35 @@ class EqListWidget extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   // 発生日時
                   Text(
                     _formatTime(eq.occurredAt),
-                    style: const TextStyle(color: Colors.white70, fontSize: 14),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      height: 1.2,
+                    ),
                   ),
-                  const SizedBox(height: 2),
-                  // M + 津波
-                  Row(
+                  const SizedBox(height: 6),
+                  // M + 深さ + 津波
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 4,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      Text(
-                        'M${eq.magnitude.toStringAsFixed(1)}',
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 16,
-                        ),
+                      _MetaChip(
+                        label: 'M${eq.magnitude.toStringAsFixed(1)}',
                       ),
-                      if (eq.tsunami) ...[
-                        const SizedBox(width: 6),
+                      _MetaChip(
+                        label: '深さ${eq.epicenter.depth}km',
+                      ),
+                      if (eq.tsunami)
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 4,
-                            vertical: 1,
+                            horizontal: 6,
+                            vertical: 2,
                           ),
                           decoration: BoxDecoration(
                             color: Colors.cyanAccent.shade700,
@@ -135,12 +142,12 @@ class EqListWidget extends StatelessWidget {
                             '津波',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 10,
+                              fontSize: 11,
                               fontWeight: FontWeight.bold,
+                              height: 1.2,
                             ),
                           ),
                         ),
-                      ],
                     ],
                   ),
                 ],
@@ -149,6 +156,34 @@ class EqListWidget extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _MetaChip extends StatelessWidget {
+  final String label;
+
+  const _MetaChip({
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: Colors.black26,
+        borderRadius: BorderRadius.circular(3),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          height: 1.2,
+        ),
+      ),
     );
   }
 }
