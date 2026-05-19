@@ -54,17 +54,30 @@ class HomeScreen extends ConsumerWidget {
                         child: ClipRect(
                           child: JapanColorMapsWidget(
                             key: ValueKey(
-                                '${selected?.epicenter.latitude ?? 0}_${selected?.epicenter.longitude ?? 0}'),
+                              '${selected?.epicenter.latitude ?? 0}_${selected?.epicenter.longitude ?? 0}',
+                            ),
                             center: LatLng(
                               latitude: selected?.epicenter.latitude ?? 36.0,
                               longitude: selected?.epicenter.longitude ?? 138.0,
                             ),
-                            backgroundColor:
-                                const Color.fromARGB(255, 137, 169, 236),
-                            otherCountryColor:
-                                const Color.fromARGB(255, 1, 57, 52),
-                            mapColor: const Color.fromARGB(255, 20, 121, 32)
-                                .withAlpha(128),
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              137,
+                              169,
+                              236,
+                            ),
+                            otherCountryColor: const Color.fromARGB(
+                              255,
+                              1,
+                              57,
+                              52,
+                            ),
+                            mapColor: const Color.fromARGB(
+                              255,
+                              20,
+                              121,
+                              32,
+                            ).withAlpha(128),
                             prefecture: prefecture,
                             onPrefectureTap: (pref) {
                               vm.selectPrefecture(pref.key);
@@ -72,7 +85,7 @@ class HomeScreen extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      // 震源ピン（リストタップ時のみ表示）
+                      // 震源ピン（選択中の地震がある時に表示）
                       if (selected != null)
                         Center(
                           child: Transform.translate(
@@ -81,7 +94,8 @@ class HomeScreen extends ConsumerWidget {
                               Icons.location_on,
                               size: 36,
                               color: IntensityColor.fromIntensity(
-                                  selected.maxIntensity),
+                                selected.maxIntensity,
+                              ),
                             ),
                           ),
                         ),
@@ -125,4 +139,3 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 }
-
