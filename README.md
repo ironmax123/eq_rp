@@ -119,7 +119,7 @@ flutter run
 
 ## スクリーンショット
 通常時
-![app_normal](screenshot/app_normal.png)
+![app_normal](screenshot/normal.png)
 
 地震発生時
 ![app_alert](screenshot/demo.png)
