@@ -1,0 +1,14 @@
+.dart_tool/
+.idea/
+build/
+build_output/
+linux_app.zip
+linux_build.zip
+*.zip
+
+.git/
+.gitignore
+.metadata
+*.iml
+
+macos/Pods/
